@@ -10,6 +10,7 @@ import jwtConfig from './config/jwt.config';
 import { UsersModule } from './users/users.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -17,15 +18,10 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
       isGlobal: true,
       load: [databaseConfig, appConfig, jwtConfig]
     }),
-    MongooseModule.forRootAsync({
-      inject: [ConfigService],
-
-      useFactory: (config: ConfigService) => ({
-        uri: config.get<string>('database.url')
-      })
-    }),
+    DatabaseModule,
     AuthModule,
-    UsersModule
+    UsersModule,
+    DatabaseModule
   ],
   controllers: [AppController],
   providers: [
