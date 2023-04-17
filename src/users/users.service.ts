@@ -1,24 +1,29 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { FilterQuery } from 'mongoose';
-import { CreateUserDto } from './dtos/create-user.dto';
-import { UpdateUserDto } from './dtos/update-user.dto';
-import { User, UserDocument } from './user.schema';
-import { UsersRepository } from './users.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>
+  ) {}
 
-  async findById(id: string): Promise<User> {
-    return await this.usersRepository.findOne({ _id: id });
+  async findById(id: number): Promise<User> {
+    return await this.usersRepository.findOneBy({ id });
   }
 
-  async find(filter?: FilterQuery<User>): Promise<User[]> {
-    return await this.usersRepository.find(filter);
+  async find(): Promise<User[]> {
+    return await this.usersRepository.find();
   }
 
-  async findOne(filter?: FilterQuery<User>): Promise<UserDocument> {
-    return await this.usersRepository.findOne(filter);
+  findWithFilter(filter: Partial<User>): Promise<User[]> {
+    return this.usersRepository.find({ where: filter });
+  }
+
+  async findOne(filter: Partial<User>): Promise<User> {
+    return await this.usersRepository.findOneBy({ ...filter });
   }
 
   async findOneOrFail(filter: Partial<User>) {
@@ -34,12 +39,7 @@ export class UsersService {
     return await this.usersRepository.create(createUserDto);
   }
 
-  async update(id: Partial<User>['_id'], update: UpdateUserDto): Promise<User> {
-    return await this.usersRepository.update(
-      {
-        _id: id
-      },
-      update
-    );
+  async update(id: Partial<User>['id'], update: Partial<User>) {
+    return await this.usersRepository.update(id, update);
   }
 }

@@ -14,20 +14,8 @@ export class UserDto {
   @IsNotEmpty()
   @MinLength(3)
   name: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(5)
-  password: string;
 }
 
-export class UserDtoWithoutPassword extends UserDto {
-  constructor(dto: UserDto) {
-    super();
-    Object.assign(this, dto);
-    delete this.password;
-  }
-}
+export class UserDtoWithoutPassword extends UserDto {}
 
 export { CreateUserDto, UpdateUserDto };

@@ -25,14 +25,14 @@ export class UsersController {
   }
 
   @Get('/:id')
-  async findById(@Param('id') id: string) {
+  async findById(@Param('id') id: number) {
     const user = await this.usersService.findById(id);
 
     return { data: user };
   }
 
   @Patch('/:id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
     const updatedUser = await this.usersService.update(id, updateUserDto);
 
     return { data: updatedUser };
