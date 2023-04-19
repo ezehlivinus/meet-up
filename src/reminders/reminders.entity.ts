@@ -1,26 +1,26 @@
-import { Reminder } from '@/reminders/reminders.entity';
+import { User } from '@/users/user.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany
+  ManyToOne
 } from 'typeorm';
 
 @Entity()
-export class User {
+export class Reminder {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  name: string;
+  @ManyToOne(() => User, (user) => user.reminders)
+  user: User;
 
   @Column()
-  email: string;
+  description: string;
 
-  @OneToMany(() => Reminder, (reminder) => reminder.user)
-  reminders: [];
+  @CreateDateColumn()
+  date: Date;
 
   @CreateDateColumn()
   createdAt: Date;

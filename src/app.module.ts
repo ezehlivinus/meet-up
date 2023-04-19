@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { DatabaseModule } from './database/database.module';
+import { RemindersModule } from './reminders/reminders.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { DatabaseModule } from './database/database.module';
     }),
     DatabaseModule,
     // AuthModule,
-    UsersModule
+    UsersModule,
+    RemindersModule
   ],
   controllers: [AppController],
   providers: [

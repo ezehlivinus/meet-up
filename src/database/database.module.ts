@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
-
+import { User } from '@/users/user.entity';
+import { Reminder } from '@/reminders/reminders.entity';
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -21,8 +22,10 @@ import { ConfigService } from '@nestjs/config';
           ssl: {
             rejectUnauthorized: false
           },
-          entities: [__dirname + '/**/*.entity{.ts,.js}'],
-          synchronize: config.get('app.env') === 'development' ? true : false
+          // entities: [__dirname + '/**/*.entity{.ts,.js}'],
+          entities: [User, Reminder],
+          synchronize:
+            config.get('app.envName') === 'development' ? true : false
         } as TypeOrmModuleOptions)
     })
   ]

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { User } from './user.entity';
 
 @Injectable()
@@ -14,19 +14,20 @@ export class UsersService {
     return await this.usersRepository.findOneBy({ id });
   }
 
-  async find(): Promise<User[]> {
-    return await this.usersRepository.find();
+  async find(filter?: FindManyOptions<User>): Promise<User[]> {
+    const options: FindManyOptions<User> = filter as FindManyOptions<User>;
+    return await this.usersRepository.find(options);
   }
 
-  findWithFilter(filter: Partial<User>): Promise<User[]> {
-    return this.usersRepository.find({ where: filter });
+  async findWithFilter(filter: FindManyOptions<User>): Promise<User[]> {
+    return await this.usersRepository.find(filter);
   }
 
-  async findOne(filter: Partial<User>): Promise<User> {
-    return await this.usersRepository.findOneBy({ ...filter });
+  async findOne(filter: FindOptionsWhere<User>): Promise<User> {
+    return await this.usersRepository.findOneBy(filter);
   }
 
-  async findOneOrFail(filter: Partial<User>) {
+  async findOneOrFail(filter: FindOptionsWhere<User>) {
     const user = await this.findOne(filter);
     if (user) {
       throw new BadRequestException('User already exists');
@@ -36,7 +37,7 @@ export class UsersService {
 
   async create(createUserDto: Partial<User>) {
     await this.findOneOrFail({ email: createUserDto.email });
-    return await this.usersRepository.create(createUserDto);
+    return await this.usersRepository.save(createUserDto);
   }
 
   async update(id: Partial<User>['id'], update: Partial<User>) {
