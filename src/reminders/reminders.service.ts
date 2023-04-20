@@ -18,7 +18,13 @@ export class RemindersService {
     return await this.remindersRepository.findOneBy({ id });
   }
 
-  async find(filter?: FindManyOptions<Reminder>): Promise<Reminder[]> {
+  async find(filter?: FindManyOptions<Reminder>) {
+    filter.loadRelationIds = true;
+
+    filter.order = {
+      id: 'ASC'
+    };
+
     return await this.remindersRepository.find(filter);
   }
 }

@@ -5,7 +5,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne
+  ManyToOne,
+  JoinColumn,
+  RelationId
 } from 'typeorm';
 
 @Entity()
@@ -19,7 +21,7 @@ export class Reminder {
   @Column()
   description: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   date: Date;
 
   @CreateDateColumn()

@@ -12,29 +12,27 @@ export class UsersController {
   async create(@Body() createUserDto: CreateUserDto) {
     const newUser = await this.usersService.create(createUserDto);
 
-    return {
-      data: newUser
-    };
+    return newUser;
   }
 
   @Get('/')
   async find() {
     const users = await this.usersService.find();
 
-    return { data: users };
+    return users;
   }
 
   @Get('/:id')
   async findById(@Param('id') id: number) {
     const user = await this.usersService.findById(id);
 
-    return { data: user };
+    return user;
   }
 
   @Patch('/:id')
   async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
     const updatedUser = await this.usersService.update(id, updateUserDto);
 
-    return { data: updatedUser };
+    return updatedUser;
   }
 }

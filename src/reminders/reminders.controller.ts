@@ -5,14 +5,24 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
-  Post
+  Post,
+  Query
 } from '@nestjs/common';
 import { RemindersService } from './reminders.service';
-import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiTags
+} from '@nestjs/swagger';
 import { CreateUserDto } from '@/users/dtos/user.dto';
-import { CreateReminderDto } from './dtos/reminder.dto';
+import { CreateReminderDto, FindRemindersQueryDto } from './dtos/reminder.dto';
 import { User } from '@/users/user.entity';
+import { Equal, FindManyOptions, MoreThanOrEqual } from 'typeorm';
+import { Reminder } from './reminders.entity';
+import { ErrorResponseDTO } from '@/common/dtos/response.dto';
 
 @Controller('reminders')
 @ApiTags('reminders')
@@ -29,29 +39,50 @@ export class RemindersController {
       createReminderDto as Partial<User>
     );
 
-    return {
-      data: newReminder
-    };
+    return newReminder;
   }
 
   @Get('/')
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Endpoint for listing all reminders'
   })
-  async find() {
-    const reminders = await this.remindersService.find();
+  async find(@Query() query: FindRemindersQueryDto) {
+    const filter: FindManyOptions<Reminder> = {};
 
-    return {
-      data: reminders
-    };
+    if (query?.after) {
+      filter.where = {
+        date: MoreThanOrEqual(new Date(query.after))
+      };
+    }
+
+    if (query?.user) {
+      filter.where = {
+        user: Equal(query.user)
+      };
+    }
+
+    const reminders = await this.remindersService.find(filter);
+
+    return reminders;
   }
 
   @Get('/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Endpoint for getting a reminder'
+  })
+  @ApiNotFoundResponse({
+    type: ErrorResponseDTO
+  })
   async findById(@Param('id') id: number) {
     const user = await this.remindersService.findById(id);
 
-    return { data: user };
+    if (!user) {
+      throw new NotFoundException('ID not found');
+    }
+
+    return user;
   }
 
   @All('*')

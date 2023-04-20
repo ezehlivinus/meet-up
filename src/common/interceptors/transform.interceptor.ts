@@ -22,14 +22,16 @@ export class TransformInterceptor<T>
   ): Observable<Response<T>> {
     return next.handle().pipe(
       map((data = {}) => {
-        return {
-          success: data?.success ?? true,
-          ...(data.message
-            ? { message: data.message }
-            : typeof data === 'string'
-            ? { message: data }
-            : data)
-        };
+        return data;
+        // the below code moves the response into data whose content is content is either object or array of objects
+        // return {
+        // success: data?.success ?? true,
+        // ...(data.message
+        //   ? { message: data.message }
+        //   : typeof data === 'string'
+        //   ? { message: data }
+        //   : data)
+        // };
       })
     );
   }

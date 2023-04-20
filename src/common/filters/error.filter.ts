@@ -70,24 +70,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         errorMessage = errorResponse.message[0];
       }
 
-      return response.status(status).json({
-        success: false,
-        error: errorMessage,
-        errors: Array.isArray(errorResponse.message)
-          ? errorResponse.message
-          : undefined
-      });
-    }
-
-    if (exception instanceof mongoose.Error.ValidationError) {
-      const errorMessages: string[] = Object.values(exception.errors).map(
-        (e) => e.message
-      );
-      return response.status(HttpStatus.BAD_REQUEST).json({
-        success: false,
-        error: errorMessages[0],
-        errors: errorMessages
-      });
+      return response.status(status).json(errorMessage);
     }
 
     //
@@ -96,7 +79,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-      success: false,
+      // success: false,
       error: 'Something went wrong. Please try again later.'
     });
   }
